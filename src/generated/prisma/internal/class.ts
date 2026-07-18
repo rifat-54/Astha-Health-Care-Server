@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.8.0",
   "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Speciality {\n  id String @id @default(uuid())\n\n  title String @unique @db.VarChar(100)\n\n  description String? @db.Text\n\n  icon String? @db.VarChar(255)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  isDeleted Boolean   @default(false)\n  deletedAt DateTime?\n\n  @@index([isDeleted], name: \"idx_speciality_isDeleted\")\n  @@index([title], name: \"idx_speciality_title\")\n  @@map(\"specialities\")\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Specialty {\n  id String @id @default(uuid())\n\n  title String @unique @db.VarChar(100)\n\n  description String? @db.Text\n\n  icon String? @db.VarChar(255)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  isDeleted Boolean   @default(false)\n  deletedAt DateTime?\n\n  @@index([isDeleted], name: \"idx_specialty_isDeleted\")\n  @@index([title], name: \"idx_specialty_title\")\n  @@map(\"specialities\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -32,9 +32,9 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Speciality\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"icon\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isDeleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"specialities\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Specialty\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"icon\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isDeleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"specialities\"}},\"enums\":{},\"types\":{}}")
 config.parameterizationSchema = {
-  strings: JSON.parse("[\"where\",\"Speciality.findUnique\",\"Speciality.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"Speciality.findFirst\",\"Speciality.findFirstOrThrow\",\"Speciality.findMany\",\"data\",\"Speciality.createOne\",\"Speciality.createMany\",\"Speciality.createManyAndReturn\",\"Speciality.updateOne\",\"Speciality.updateMany\",\"Speciality.updateManyAndReturn\",\"create\",\"update\",\"Speciality.upsertOne\",\"Speciality.deleteOne\",\"Speciality.deleteMany\",\"having\",\"_count\",\"_min\",\"_max\",\"Speciality.groupBy\",\"Speciality.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"title\",\"description\",\"icon\",\"createdAt\",\"updatedAt\",\"isDeleted\",\"deletedAt\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"not\",\"contains\",\"startsWith\",\"endsWith\",\"set\"]"),
+  strings: JSON.parse("[\"where\",\"Specialty.findUnique\",\"Specialty.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"Specialty.findFirst\",\"Specialty.findFirstOrThrow\",\"Specialty.findMany\",\"data\",\"Specialty.createOne\",\"Specialty.createMany\",\"Specialty.createManyAndReturn\",\"Specialty.updateOne\",\"Specialty.updateMany\",\"Specialty.updateManyAndReturn\",\"create\",\"update\",\"Specialty.upsertOne\",\"Specialty.deleteOne\",\"Specialty.deleteMany\",\"having\",\"_count\",\"_min\",\"_max\",\"Specialty.groupBy\",\"Specialty.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"title\",\"description\",\"icon\",\"createdAt\",\"updatedAt\",\"isDeleted\",\"deletedAt\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"not\",\"contains\",\"startsWith\",\"endsWith\",\"set\"]"),
   graph: "OgkQCxoAACwAMBsAAAQAEBwAACwAMB0BAAAAAR4BAAAAAR8BAC4AISABAC4AISFAAC8AISJAAC8AISMgADAAISRAADEAIQEAAAABACABAAAAAQAgCxoAACwAMBsAAAQAEBwAACwAMB0BAC0AIR4BAC0AIR8BAC4AISABAC4AISFAAC8AISJAAC8AISMgADAAISRAADEAIQMfAAAyACAgAAAyACAkAAAyACADAAAABAAgAwAABQAwBAAAAQAgAwAAAAQAIAMAAAUAMAQAAAEAIAMAAAAEACADAAAFADAEAAABACAIHQEAAAABHgEAAAABHwEAAAABIAEAAAABIUAAAAABIkAAAAABIyAAAAABJEAAAAABAQgAAAkAIAgdAQAAAAEeAQAAAAEfAQAAAAEgAQAAAAEhQAAAAAEiQAAAAAEjIAAAAAEkQAAAAAEBCAAACwAwAQgAAAsAMAgdAQA2ACEeAQA2ACEfAQA3ACEgAQA3ACEhQAA4ACEiQAA4ACEjIAA5ACEkQAA6ACECAAAAAQAgCAAADgAgCB0BADYAIR4BADYAIR8BADcAISABADcAISFAADgAISJAADgAISMgADkAISRAADoAIQIAAAAEACAIAAAQACACAAAABAAgCAAAEAAgAwAAAAEAIA8AAAkAIBAAAA4AIAEAAAABACABAAAABAAgBhUAADMAIBYAADUAIBcAADQAIB8AADIAICAAADIAICQAADIAIAsaAAAaADAbAAAXABAcAAAaADAdAQAbACEeAQAbACEfAQAcACEgAQAcACEhQAAdACEiQAAdACEjIAAeACEkQAAfACEDAAAABAAgAwAAFgAwFAAAFwAgAwAAAAQAIAMAAAUAMAQAAAEAIAsaAAAaADAbAAAXABAcAAAaADAdAQAbACEeAQAbACEfAQAcACEgAQAcACEhQAAdACEiQAAdACEjIAAeACEkQAAfACEOFQAAJAAgFgAAKwAgFwAAKwAgJQEAAAABJgEAAAAEJwEAAAAEKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAKgAhLQEAAAABLgEAAAABLwEAAAABDhUAACEAIBYAACkAIBcAACkAICUBAAAAASYBAAAABScBAAAABSgBAAAAASkBAAAAASoBAAAAASsBAAAAASwBACgAIS0BAAAAAS4BAAAAAS8BAAAAAQsVAAAkACAWAAAnACAXAAAnACAlQAAAAAEmQAAAAAQnQAAAAAQoQAAAAAEpQAAAAAEqQAAAAAErQAAAAAEsQAAmACEFFQAAJAAgFgAAJQAgFwAAJQAgJSAAAAABLCAAIwAhCxUAACEAIBYAACIAIBcAACIAICVAAAAAASZAAAAABSdAAAAABShAAAAAASlAAAAAASpAAAAAAStAAAAAASxAACAAIQsVAAAhACAWAAAiACAXAAAiACAlQAAAAAEmQAAAAAUnQAAAAAUoQAAAAAEpQAAAAAEqQAAAAAErQAAAAAEsQAAgACEIJQIAAAABJgIAAAAFJwIAAAAFKAIAAAABKQIAAAABKgIAAAABKwIAAAABLAIAIQAhCCVAAAAAASZAAAAABSdAAAAABShAAAAAASlAAAAAASpAAAAAAStAAAAAASxAACIAIQUVAAAkACAWAAAlACAXAAAlACAlIAAAAAEsIAAjACEIJQIAAAABJgIAAAAEJwIAAAAEKAIAAAABKQIAAAABKgIAAAABKwIAAAABLAIAJAAhAiUgAAAAASwgACUAIQsVAAAkACAWAAAnACAXAAAnACAlQAAAAAEmQAAAAAQnQAAAAAQoQAAAAAEpQAAAAAEqQAAAAAErQAAAAAEsQAAmACEIJUAAAAABJkAAAAAEJ0AAAAAEKEAAAAABKUAAAAABKkAAAAABK0AAAAABLEAAJwAhDhUAACEAIBYAACkAIBcAACkAICUBAAAAASYBAAAABScBAAAABSgBAAAAASkBAAAAASoBAAAAASsBAAAAASwBACgAIS0BAAAAAS4BAAAAAS8BAAAAAQslAQAAAAEmAQAAAAUnAQAAAAUoAQAAAAEpAQAAAAEqAQAAAAErAQAAAAEsAQApACEtAQAAAAEuAQAAAAEvAQAAAAEOFQAAJAAgFgAAKwAgFwAAKwAgJQEAAAABJgEAAAAEJwEAAAAEKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAKgAhLQEAAAABLgEAAAABLwEAAAABCyUBAAAAASYBAAAABCcBAAAABCgBAAAAASkBAAAAASoBAAAAASsBAAAAASwBACsAIS0BAAAAAS4BAAAAAS8BAAAAAQsaAAAsADAbAAAEABAcAAAsADAdAQAtACEeAQAtACEfAQAuACEgAQAuACEhQAAvACEiQAAvACEjIAAwACEkQAAxACELJQEAAAABJgEAAAAEJwEAAAAEKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAKwAhLQEAAAABLgEAAAABLwEAAAABCyUBAAAAASYBAAAABScBAAAABSgBAAAAASkBAAAAASoBAAAAASsBAAAAASwBACkAIS0BAAAAAS4BAAAAAS8BAAAAAQglQAAAAAEmQAAAAAQnQAAAAAQoQAAAAAEpQAAAAAEqQAAAAAErQAAAAAEsQAAnACECJSAAAAABLCAAJQAhCCVAAAAAASZAAAAABSdAAAAABShAAAAAASlAAAAAASpAAAAAAStAAAAAASxAACIAIQAAAAABMAEAAAABATABAAAAAQEwQAAAAAEBMCAAAAABATBAAAAAAQAAAAADFQAGFgAHFwAIAAAAAxUABhYABxcACAECAQIDAQUGAQYHAQcIAQkKAQoMAgsNAwwPAQ0RAg4SBBETARIUARMVAhgYBRkZCQ"
 }
 
@@ -70,8 +70,8 @@ export interface PrismaClientConstructor {
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Specialities
-   * const specialities = await prisma.speciality.findMany()
+   * // Fetch zero or more Specialties
+   * const specialties = await prisma.specialty.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -94,8 +94,8 @@ export interface PrismaClientConstructor {
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Specialities
- * const specialities = await prisma.speciality.findMany()
+ * // Fetch zero or more Specialties
+ * const specialties = await prisma.specialty.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -189,14 +189,14 @@ export interface PrismaClient<
   }>>
 
       /**
-   * `prisma.speciality`: Exposes CRUD operations for the **Speciality** model.
+   * `prisma.specialty`: Exposes CRUD operations for the **Specialty** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Specialities
-    * const specialities = await prisma.speciality.findMany()
+    * // Fetch zero or more Specialties
+    * const specialties = await prisma.specialty.findMany()
     * ```
     */
-  get speciality(): Prisma.SpecialityDelegate<ExtArgs, { omit: OmitOpts }>;
+  get specialty(): Prisma.SpecialtyDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {
