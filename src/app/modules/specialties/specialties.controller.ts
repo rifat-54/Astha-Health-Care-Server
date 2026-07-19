@@ -11,7 +11,28 @@ const createSpecialty=async(req:Request,res:Response)=>{
     }
 }
 
+const getAllSpecialty=async(req:Request,res:Response)=>{
+    try {
+        const result =await SpecialtyServices.getAllSpecialty()
+        res.status(200).json({success:true,data:result})
+    } catch (error) {
+        
+    }
+}
+
+const deleteSpecialty=async(req:Request,res:Response)=>{
+    try {
+        const id=req.params.id as string
+        const result=await SpecialtyServices.deleteSpecialty(id)
+        res.status(200).json({success:true,data:result})
+    } catch (error) {
+        
+    }
+}
+
 
 export const specialtyController={
-    createSpecialty
+    createSpecialty,
+    getAllSpecialty,
+    deleteSpecialty
 }
