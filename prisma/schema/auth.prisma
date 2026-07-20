@@ -15,6 +15,7 @@ model User {
   needPasswordChange Boolean   @default(false)
   isDeleted          Boolean   @default(false)
   deletedAt          DateTime?
+  patient Patient?
 
   @@unique([email])
   @@map("user")
