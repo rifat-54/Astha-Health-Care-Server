@@ -14,6 +14,8 @@ app.use(express.json());
 app.use("/api/v1/",IndexRoutes)
 
 
+
+
 // Basic route
 app.get('/', async (req: Request, res: Response) => {
     res.send("server is running")
