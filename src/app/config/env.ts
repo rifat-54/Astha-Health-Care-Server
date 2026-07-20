@@ -35,3 +35,5 @@ const loadEnvVariable=():EnvConfig=>{
         BETTER_AUTH_URL: process.env.BETTER_AUTH_URL as string,
     }
 }
+
+export const envVeriable=loadEnvVariable();
