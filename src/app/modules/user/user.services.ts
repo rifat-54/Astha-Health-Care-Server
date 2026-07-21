@@ -20,14 +20,14 @@ interface ICreateDoctorPayload {
         currentWorkingPlace: string;
         designation: string;
     }
-    specialties: string[];
+    doctorSpecialties: string[];
 }
 
 const createDoctor = async (payload: ICreateDoctorPayload) => {
 
     const specialties: Specialty[] = [];
 
-    for (const specialtyId of payload.specialties) {
+    for (const specialtyId of payload.doctorSpecialties) {
         const specialty = await prisma.specialty.findUnique({
             where: {
                 id: specialtyId
@@ -120,7 +120,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
                             updatedAt: true,
                         }
                     },
-                    specialties: {
+                    doctorSpecilaties: {
                         select: {
                             specialty: {
                                 select: {
@@ -148,6 +148,8 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
         throw error;
     }
 }
+
+
 
 export const UserServices={
     createDoctor

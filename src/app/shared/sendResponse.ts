@@ -3,8 +3,8 @@ import { Response } from "express"
 
 interface IResponseData<T>{
     httpStatusCode:number,
-    success:boolean,
-    message:string,
+    success?:boolean,
+    message?:string,
     data?:T
 }
 
