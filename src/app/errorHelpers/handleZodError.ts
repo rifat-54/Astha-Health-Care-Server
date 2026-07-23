@@ -8,7 +8,7 @@ export const handleZodError=(err:z.ZodError):IErrorResponse=>{
     const errorSources:IErrorSources[]=[]
 
     // err.issues.forEach
-    // console.log("issue zod",err.issues)
+    console.log("issue zod",err.issues)
 
     err.issues.forEach((issue)=>{
         errorSources.push({
