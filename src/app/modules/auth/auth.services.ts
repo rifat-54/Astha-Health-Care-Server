@@ -49,7 +49,7 @@ const registerPatient=async(payload:IRegistrationPatientPayload)=>{
         isDeleted:data.user.isDeleted,
         emailVerified:data.user.emailVerified
     })
-    const refreshToken=tokenUtils.getAccessToken({
+    const refreshToken=tokenUtils.getRefreshToken({
         userId:data.user.id,
         role:data.user.role,
         name:data.user.name,
@@ -114,7 +114,7 @@ const loginPatient=async(payload:IRegistrationPatientPayload)=>{
         isDeleted:data.user.isDeleted,
         emailVerified:data.user.emailVerified
     })
-    const refreshToken=tokenUtils.getAccessToken({
+    const refreshToken=tokenUtils.getRefreshToken({
         userId:data.user.id,
         role:data.user.role,
         name:data.user.name,
