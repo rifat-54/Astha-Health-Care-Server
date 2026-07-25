@@ -13,5 +13,7 @@ router.post("/create-doctor",
 
 router.post("/create-admin",validateRequest(createAdminZodSchema),userControler.createAdmin)
 
+router.post("/create-super-admin",validateRequest(createAdminZodSchema),userControler.createSuperAdmin)
+
 
 export const userRoutes = router;
