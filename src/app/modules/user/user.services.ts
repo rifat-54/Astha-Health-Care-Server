@@ -4,6 +4,7 @@ import { auth } from "../../lib/auth";
 import { Gender, UserRole } from "../../../generated/prisma/enums";
 import { Specialty } from "../../../generated/prisma/client";
 import AppError from "../../errorHelpers/AppError";
+import { ICreateAdmin } from "./user.interface";
 
 interface ICreateDoctorPayload {
     password: string;
@@ -23,6 +24,8 @@ interface ICreateDoctorPayload {
     }
     doctorSpecialties: string[];
 }
+
+
 
 // const createDoctor = async (payload: ICreateDoctorPayload) => {
 
@@ -269,8 +272,13 @@ const createDoctor=async(payload:ICreateDoctorPayload)=>{
 
 }
 
+const createAdmin=async(payload:ICreateAdmin)=>{
+    console.log("admin data",payload)
+}
+
 
 
 export const UserServices={
-    createDoctor
+    createDoctor,
+    createAdmin
 }

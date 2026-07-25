@@ -50,3 +50,13 @@ export const createDoctorZodSchema = z.object({
     .array(z.uuid(), "Specialty must be an array of strings")
     .min(1, "at least one specialty is required"),
 });
+
+export const createAdminZodSchema=z.object({
+  password:z.string().min(6,"Password must be at lest 6 character"),
+  admin:z.object({
+    name:z.string().min(1,"Name is required"),
+    email:z.email("Invalid email fomat"),
+    profilePhoto:z.url("invalid url format").optional(),
+    contactNumber:z.string().min(11,"Contact number must be at least 11 character").max(15,"contact number must be at most 15 character").optional()
+  })
+})
