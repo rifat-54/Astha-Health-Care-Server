@@ -111,8 +111,32 @@ const updateDoctor = async (id: string, payload: IUpdateDoctor) => {
   return result;
 };
 
+const softDeleteDoctor=async(id:string)=>{
+
+    const existsDoctor=await prisma.doctor.findUnique({
+        where:{id}
+    })
+    if(!existsDoctor){
+        throw new AppError(status.NOT_FOUND,"Doctor not found")
+    }
+
+    if(existsDoctor.isDeleted){
+        throw new AppError(status.BAD_REQUEST,"Doctor is aleady deletd")
+    }
+    
+    const result=await prisma.doctor.update({
+        where:{id},
+        data:{
+            isDeleted:true,
+            deletedAt:new Date()
+        }
+    })
+    return result;
+}
+
 export const doctorServices = {
   getAllDoctors,
   getDoctorById,
   updateDoctor,
+  softDeleteDoctor
 };

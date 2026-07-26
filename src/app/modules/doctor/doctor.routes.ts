@@ -13,6 +13,8 @@ router.get("/",doctorController.getAllDoctors)
 
 router.get("/:id",doctorController.getDoctorById)
 
+router.delete("/:id",checkAuth(UserRole.ADMIN,UserRole.SUPER_ADMIN),doctorController.softDeleteDoctor)
+
 router.patch("/:id",checkAuth(UserRole.ADMIN,UserRole.DOCTOR,UserRole.SUPER_ADMIN),validateRequest(doctorValidation.doctorUpdateValidationZodSehema),doctorController.updateDoctor)
 
 export const doctorRoutes=router;
