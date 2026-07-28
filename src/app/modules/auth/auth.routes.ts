@@ -10,16 +10,6 @@ const router=Router()
 router.post("/register",authController.registerPatient)
 router.post("/login",authController.loginPatient)
 
-
-// router.post("/demo",checkAuth(UserRole.PATIENT),async(req:Request,res:Response)=>{
-//     tokenUtils.setAccessTokenCookie(res,"iampaglaghura")
-//     res.send("done work set cookie now check it")
-// })
-
-// router.get("/demo2",async(req:Request,res:Response)=>{
-//     // tokenUtils.setAccessTokenCookie(res,"iampaglaghura")
-//     const cookie=cookieUtils.getCookie(req,"accessToken")
-// res.send(`${cookie}`)
-// })
+router.get("/me",authController.getMe)
 
 export const authRoutes=router;

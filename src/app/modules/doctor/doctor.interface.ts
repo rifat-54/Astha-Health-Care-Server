@@ -1,5 +1,10 @@
 import { Gender } from "../../../generated/prisma/enums";
 
+export interface IUpdateDoctorSpecialties{
+  specialtyId:string
+  shouldDelete?:boolean
+}
+
 export interface IUpdateDoctor {
   doctor: {
     name?: string;
@@ -14,5 +19,7 @@ export interface IUpdateDoctor {
     currentWorkingPlace?: string;
     designation?: string;
   };
-  doctorSpecialties?: string[];
+  doctorSpecialties?: IUpdateDoctorSpecialties[];
 }
+
+

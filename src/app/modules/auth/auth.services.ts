@@ -1,4 +1,5 @@
 import { UserStatus } from "../../../generated/prisma/enums"
+import { IRequestUser } from "../../interface/requestUser.interface"
 import { auth } from "../../lib/auth"
 import { prisma } from "../../lib/prisma"
 import { tokenUtils } from "../../utils/token"
@@ -132,7 +133,12 @@ const loginPatient=async(payload:IRegistrationPatientPayload)=>{
     };
 }
 
+const getMe=async(payload:IRequestUser)=>{
+    return "get me"
+}
+
 export const authServices={
     registerPatient,
-    loginPatient
+    loginPatient,
+    getMe
 }

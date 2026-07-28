@@ -62,36 +62,61 @@ const updateDoctor = async (id: string, payload: IUpdateDoctor) => {
   // separate specialties from doctor data
   const { doctorSpecialties, ...doctorData } = payload;
 
-  const updatedoctor = await prisma.doctor.update({
-    where: {
-      id,
-    },
-    data: doctorData.doctor,
-  });
+
+  await prisma.$transaction(async(tx)=>{
+    if(doctorData){
+         await tx.doctor.update({
+          where: {
+                 id,
+              },
+          data: doctorData.doctor,
+        });
+    }
+
+      if (doctorSpecialties && doctorSpecialties.length > 0) {
+
+      for(const specialty of doctorSpecialties){
+        const {specialtyId,shouldDelete}=specialty
+
+        if(shouldDelete){
+          await tx.doctorSpecialty.delete({
+            where:{
+              doctorId_specialtyId:{
+                doctorId:id,
+                specialtyId
+              }
+            }
+          })
+        }else{
+          await tx.doctorSpecialty.upsert({
+           where:{
+              doctorId_specialtyId:{
+                doctorId:id,
+                specialtyId
+              }
+            },
+            create:{
+              doctorId:id,
+              specialtyId
+            },
+            update:{}
+          })
+        }
+
+
+
+      }
+
+
+  }
+
+  })
+
+
+
 
   // if specialties are provided ,update them saparately
-  if (doctorSpecialties && doctorSpecialties.length > 0) {
-    await prisma.$transaction(async (tx) => {
-      // delete old specialties
-      await tx.doctorSpecialty.deleteMany({
-        where: {
-          doctorId: id,
-        },
-      });
 
-      // new specialties object
-      const specialtiesData = doctorSpecialties.map((specialtyId) => ({
-        doctorId: id,
-        specialtyId,
-      }));
-
-      // crate new specialties
-
-      await tx.doctorSpecialty.createMany({
-        data: specialtiesData,
-      });
-    });
-  }
 
   // fetch data
   const result = await prisma.doctor.findUnique({

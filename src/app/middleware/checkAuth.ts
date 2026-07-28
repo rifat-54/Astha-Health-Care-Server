@@ -62,6 +62,15 @@ export const checkAuth=(...authRoles:UserRole[])=>{
                 if(authRoles.length>0 && !authRoles.includes(user.role as UserRole)){
                     throw new AppError(status.FORBIDDEN,"Forbidden access!,You don't have permission to access this resouces")
                 }
+
+
+                // add addition fild on req
+
+                req.user={
+                    userId:user.id,
+                    role:user.role,
+                    email:user.email
+                }
             }
 
         }
