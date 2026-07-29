@@ -10,6 +10,7 @@ const router=Router()
 router.post("/register",authController.registerPatient)
 router.post("/login",authController.loginPatient)
 
-router.get("/me",authController.getMe)
+router.get("/me",checkAuth(),authController.getMe)
+router.post("/refresh-token",authController.getNewtoken)
 
-export const authRoutes=router;
+export const authRoutes=router;  

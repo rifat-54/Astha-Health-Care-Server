@@ -19,6 +19,7 @@ model Patient{
   patientHealthData PatientHealthData?
   prescription Prescription[]
   review Review[]
+  appointment Appointment[]
 
   @@index([email],name:"idx_patient_email")
   @@index([isDeleted],name:"idx_patient_isDeleted")

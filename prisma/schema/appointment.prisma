@@ -8,7 +8,7 @@ model Appointment{
     updatedAt DateTime @updatedAt
 
     patientId String
-    // patient Patient 
+    patient Patient @relation(fields: [patientId],references: [id],onDelete: Cascade,onUpdate: Cascade)
 
     doctorId String
     doctor Doctor @relation(fields: [doctorId],references: [id],onDelete: Cascade,onUpdate: Cascade)
