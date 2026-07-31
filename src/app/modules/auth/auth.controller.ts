@@ -5,6 +5,7 @@ import { sendResponse } from "../../shared/sendResponse";
 import { tokenUtils } from "../../utils/token";
 import status from "http-status";
 import AppError from "../../errorHelpers/AppError";
+import { cookieUtils } from "../../utils/cookie";
 
 
 const registerPatient=catchAsync(async(req:Request,res:Response)=>{
@@ -123,10 +124,42 @@ const changePassword=catchAsync(
     }
 )
 
+const logOut=catchAsync(
+    async(req:Request,res:Response)=>{
+        const sessionToken=req.cookies["better-auth.session_token"]
+
+        const  result=await authServices.logOut(sessionToken)
+
+        cookieUtils.clearCookie(res,"accessToken",{
+            httpOnly:true,
+            secure:true,
+            sameSite:"none"
+        })
+        cookieUtils.clearCookie(res,"refreshToken",{
+            httpOnly:true,
+            secure:true,
+            sameSite:"none"
+        })
+        cookieUtils.clearCookie(res,"better-auth.session_token",{
+            httpOnly:true,
+            secure:true,
+            sameSite:"none"
+        })
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"Successfully logout",
+            data:result
+        })
+    }
+)
+
 export const authController={
     registerPatient,
     loginPatient,
     getMe,
     getNewtoken,
-    changePassword
+    changePassword,
+    logOut
 }
