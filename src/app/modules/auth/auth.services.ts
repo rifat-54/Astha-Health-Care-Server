@@ -8,6 +8,7 @@ import { tokenUtils } from "../../utils/token"
 import { jwtUtils } from "../../utils/jwt"
 import { envVeriable } from "../../config/env"
 import { JwtPayload } from "jsonwebtoken"
+import { IChangePasswordPayload } from "./auth.interface"
 
 interface IRegistrationPatientPayload{
     name:string,
@@ -223,7 +224,7 @@ const getNewtoken=async(refreshToken:string,sessionToken:string)=>{
         },
         data:{
             token:sessionToken,
-            expiresAt:new Date(Date.now()+60 * 60 * 60 * 24 * 1000),
+            expiresAt:new Date(Date.now()+60 * 60  * 24 ),
             updatedAt:new Date()
         }
     })
@@ -237,9 +238,84 @@ const getNewtoken=async(refreshToken:string,sessionToken:string)=>{
 }
 
 
+const changePassword=async(payload:IChangePasswordPayload,sessionToken:string)=>{
+    console.log(payload)
+
+    const session=await auth.api.getSession({
+        headers:new Headers({
+            Authorization:`Bearer ${sessionToken}`
+        })
+    })
+
+    console.log("session",session)
+
+
+    if(!session){
+        throw new AppError(status.UNAUTHORIZED,"Invalid session token")
+    }
+
+    const {currentPassword,newPassword}=payload
+
+    const result=await auth.api.changePassword({
+        body:{
+            currentPassword,
+            newPassword,
+            revokeOtherSessions:true
+        },
+        headers:new Headers({
+            Authorization:`Bearer ${sessionToken}`
+        })
+    })
+
+
+    if(session.user.needPasswordChange){
+        await prisma.user.update({
+            where:{
+                id:session.user.id
+            },
+            data:{
+                needPasswordChange:false
+            }
+        })
+    }
+
+
+    // create again new token to set on brawser
+    const data=result.user
+
+    const accessToken=tokenUtils.getAccessToken({
+        userId:data.userId,
+        role:data.role,
+        name:data.name,
+        email:data.email,
+        status:data.status,
+        isDeleted:data.isdeleted,
+        emailVerified:data.emailVerified
+    })
+
+    const refreshToken=tokenUtils.getRefreshToken({
+        userId:data.userId,
+        role:data.role,
+        name:data.name,
+        email:data.email,
+        status:data.status,
+        isDeleted:data.isdeleted,
+        emailVerified:data.emailVerified
+    })
+
+
+    return {
+        ...result,
+        accessToken,
+        refreshToken
+    }
+}
+
+
 export const authServices={
     registerPatient,
     loginPatient,
     getMe,
-    getNewtoken
+    getNewtoken,
+    changePassword
 }

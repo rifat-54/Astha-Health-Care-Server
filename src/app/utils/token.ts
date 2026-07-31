@@ -36,7 +36,7 @@ const setRefreshTokenCookie=(res:Response,token:string)=>{
         secure:true,
         sameSite:"none",
         path:"/",
-        maxAge:60 * 60 * 24 * 1000 * 1
+        maxAge:60 * 60 * 24 * 1000 * 7
         // maxAge:Number(maxAge)
     })
 }

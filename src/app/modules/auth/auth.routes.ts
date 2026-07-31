@@ -13,4 +13,6 @@ router.post("/login",authController.loginPatient)
 router.get("/me",checkAuth(),authController.getMe)
 router.post("/refresh-token",authController.getNewtoken)
 
+router.post("/change-password",authController.changePassword)
+
 export const authRoutes=router;  
