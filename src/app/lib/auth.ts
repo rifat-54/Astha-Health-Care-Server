@@ -25,7 +25,7 @@ export const auth = betterAuth({
     emailOTP({
       overrideDefaultEmailVerification:true,
       async sendVerificationOTP({email,type,otp}){
-        console.log("otp=> ",otp,type,email)
+        // console.log("otp=> ",otp,type,email)
         if(type==="email-verification"){
           const user=await prisma.user.findUnique({
             where:{
@@ -44,9 +44,29 @@ export const auth = betterAuth({
               }
             })
           }
+        }else if(type==="forget-password"){
+          const user=await prisma.user.findUnique({
+            where:{
+              email
+            }
+          })
+
+          if(user){
+            sendEmail({
+              to:email,
+              subject:"Password Reset OTP",
+              templateName:"otp",
+              templateData:{
+                name:user.name,
+                otp
+              }
+            })
+          }
         }
+
       },
-      expiresIn:2*60    // 2 minute in second
+      expiresIn:2*60,    // 2 minute in second
+      otpLength:6
     })
   ],
 
