@@ -4,7 +4,8 @@ import { prisma } from "./prisma";
 import { UserRole, UserStatus } from "../../generated/prisma/enums";
 import ms, { StringValue } from "ms";
 import { envVeriable } from "../config/env";
-import { bearer } from "better-auth/plugins";
+import { bearer, emailOTP } from "better-auth/plugins";
+import { sendEmail } from "../utils/email";
 // If your Prisma file is located elsewhere, you can change the path
 
 export const auth = betterAuth({
@@ -13,8 +14,41 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification:true
   },
-  plugins:[bearer()],
+  emailVerification:{
+    sendOnSignUp:true,
+    sendOnSignIn:true,
+    autoSignInAfterVerification:true
+  },
+  plugins:[bearer(),
+    emailOTP({
+      overrideDefaultEmailVerification:true,
+      async sendVerificationOTP({email,type,otp}){
+        console.log("otp=> ",otp,type,email)
+        if(type==="email-verification"){
+          const user=await prisma.user.findUnique({
+            where:{
+              email
+            }
+          })
+
+          if(user && !user.emailVerified){
+            sendEmail({
+              to:email,
+              subject:"Verify your email",
+              templateName:"otp",
+              templateData:{
+                name:user.name,
+                otp
+              }
+            })
+          }
+        }
+      },
+      expiresIn:2*60    // 2 minute in second
+    })
+  ],
 
   user: {
     additionalFields: {
@@ -53,4 +87,27 @@ export const auth = betterAuth({
       maxAge: 60 * 60 * 24 *1,
     },
   },
+
+  //  advanced: {
+  //       // disableCSRFCheck: true,
+  //       useSecureCookies : false,
+  //       cookies:{
+  //           state:{
+  //               attributes:{
+  //                   sameSite: "none",
+  //                   secure: true,
+  //                   httpOnly: true,
+  //                   path: "/",
+  //               }
+  //           },
+  //           sessionToken:{
+  //               attributes:{
+  //                   sameSite: "none",
+  //                   secure: true,
+  //                   httpOnly: true,
+  //                   path: "/",
+  //               }
+  //           }
+  //       }
+  //   }
 });

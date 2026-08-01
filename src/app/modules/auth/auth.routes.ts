@@ -17,4 +17,8 @@ router.post("/change-password",checkAuth(UserRole.PATIENT,UserRole.DOCTOR,UserRo
 
 router.post("/logout",checkAuth(UserRole.PATIENT,UserRole.DOCTOR,UserRole.ADMIN,UserRole.SUPER_ADMIN),authController.logOut)
 
+router.post("/verify-email",authController.verifyEmail)
+
+
+
 export const authRoutes=router;  

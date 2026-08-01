@@ -21,7 +21,7 @@ interface SendEmailOptions{
     to:string,
     subject:string,
     templateName:string,
-    templateDate:Record<string,any>,
+    templateData:Record<string,any>,
     attachments?:{
         filename:string,
         content:Buffer | string,
@@ -29,11 +29,11 @@ interface SendEmailOptions{
     }[]
 }
 
-export const sendEmail=async({subject,templateDate,templateName,to,attachments}:SendEmailOptions)=>{
+export const sendEmail=async({subject,templateData,templateName,to,attachments}:SendEmailOptions)=>{
     try {
         const templaetPath=path.resolve(process.cwd(),`src/app/templates/${templateName}.ejs`)
 
-        const html=await ejs.renderFile(templaetPath,templateDate)
+        const html=await ejs.renderFile(templaetPath,templateData)
 
         const info=await transporter.sendMail({
             from:envVeriable.EMAIL_SENDER.SMTP_FROM,
