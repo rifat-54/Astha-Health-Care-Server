@@ -9,12 +9,31 @@ import { sendEmail } from "../utils/email";
 // If your Prisma file is located elsewhere, you can change the path
 
 export const auth = betterAuth({
+  baseURL:envVeriable.BETTER_AUTH_URL,
+  secret:envVeriable.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
   emailAndPassword: {
     enabled: true,
     requireEmailVerification:true
+  },
+  socialProviders:{
+    google:{
+      clientId:envVeriable.GOOGLE_CLIENT_ID,
+      clientSecret:envVeriable.GOOGLE_CLIENT_SECRET,
+
+      mapProfileToUser:()=>{
+        return{
+          role:UserRole.PATIENT,
+          status:UserStatus.ACTIVE,
+          needPasswordChange:false,
+          emailVerified:true,
+          isDeleted:false,
+          deletedAt:null,
+        }
+      }
+    }
   },
   emailVerification:{
     sendOnSignUp:true,
