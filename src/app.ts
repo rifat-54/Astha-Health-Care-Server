@@ -9,9 +9,11 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./app/lib/auth";
 import cors from "cors"
 import { envVeriable } from "./app/config/env";
+import path from "path";
 
 
 const app: Application = express();
+
 
 
 // Enable URL-encoded form data parsing
@@ -27,6 +29,9 @@ app.use(cors({
     methods:["GET","POST","DELETE","PUT","PATCH","UPDATE"],
     allowedHeaders:["Content-Type","Authorization"]
 }))
+
+app.set("view engine","ejs")
+app.set("views",path.resolve(process.cwd(),`src/app/templates`))
 
 app.use("/api/auth",toNodeHandler(auth))
 

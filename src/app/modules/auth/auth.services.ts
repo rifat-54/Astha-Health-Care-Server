@@ -426,6 +426,43 @@ const resetPassword=async(email:string,otp:string,newPassword:string)=>{
 }
 
 
+// social login
+const googleLoginSuccess=async(session:Record<string,any>)=>{
+    
+    const isPatientExists=await prisma.patient.findUnique({
+        where:{
+            userId:session.user.id
+        }
+    })
+
+    if(!isPatientExists){
+        await prisma.patient.create({
+            data:{
+                userId:session.user.id,
+                name:session.user.name,
+                email:session.user.email
+            }
+        })
+    }
+
+    const accessToken=tokenUtils.getAccessToken({
+        userId:session.user.id,
+        name:session.user.name,
+        role:session.user.role
+    })
+    const refreshToken=tokenUtils.getRefreshToken({
+        userId:session.user.id,
+        name:session.user.name,
+        role:session.user.role
+    })
+
+    return{
+        accessToken,
+        refreshToken
+    }
+
+}
+
 export const authServices={
     registerPatient,
     loginPatient,
@@ -435,5 +472,6 @@ export const authServices={
     logOut,
     verifyEmail,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    googleLoginSuccess
 }

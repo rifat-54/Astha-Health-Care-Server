@@ -126,27 +126,34 @@ export const auth = betterAuth({
       maxAge: 60 * 60 * 24 *1,
     },
   },
+  redirctURLs:{
+    signIn:`%{envVeriable.BETTER_AUTH_URL}/api/v1/auth/google/success`
+  },
 
-  //  advanced: {
-  //       // disableCSRFCheck: true,
-  //       useSecureCookies : false,
-  //       cookies:{
-  //           state:{
-  //               attributes:{
-  //                   sameSite: "none",
-  //                   secure: true,
-  //                   httpOnly: true,
-  //                   path: "/",
-  //               }
-  //           },
-  //           sessionToken:{
-  //               attributes:{
-  //                   sameSite: "none",
-  //                   secure: true,
-  //                   httpOnly: true,
-  //                   path: "/",
-  //               }
-  //           }
-  //       }
-  //   }
+  trustedOrigins:[
+    envVeriable.BETTER_AUTH_URL || "http://localhost:5000" ,envVeriable.FRONTEND_URL
+  ],
+
+   advanced: {
+        // disableCSRFCheck: true,
+        useSecureCookies : false,
+        cookies:{
+            state:{
+                attributes:{
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                    path: "/",
+                }
+            },
+            sessionToken:{
+                attributes:{
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                    path: "/",
+                }
+            }
+        }
+    }
 });
