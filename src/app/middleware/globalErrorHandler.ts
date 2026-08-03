@@ -5,11 +5,26 @@ import z, { success } from "zod";
 import { handleZodError } from "../errorHelpers/handleZodError";
 import { IErrorSources } from "../interface/error.interface";
 import AppError from "../errorHelpers/AppError";
+import { deleteFileFromCloudinary } from "../config/cloudinary.config";
 
 
 export const globalErrorHandler=async(err:any,req:Request,res:Response,next:NextFunction)=>{
     if(envVeriable.NODE_ENV==="development"){
         console.log("Error from Global Error Handler",err)
+    }
+
+    // delete file from cloudinary
+
+    if(req.file){
+        await deleteFileFromCloudinary(req.file.path)
+    }
+
+    // delete multiple file from cloudinary
+
+    if(req.files && Array.isArray(req.files) && req.files.length>0){
+        const imageUrls=req.files.map((file)=>file.path)
+
+        await Promise.all(imageUrls.map((url)=>deleteFileFromCloudinary(url)))
     }
     
     let statusCode: number = status.INTERNAL_SERVER_ERROR;

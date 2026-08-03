@@ -57,4 +57,27 @@ export const uploadFileToCloudinary = async (
   })
 };
 
+
+export const deleteFileFromCloudinary=async(url:string)=> {
+  try {
+    const regex=/\/v\d+\/(.+?)(?:\.[a-zA-Z0-9]+)+$/;
+    
+    const match=url.match(regex)
+
+    if(match && match[1]){
+      const publicId=match[1]
+
+      await cloudinary.uploader.destroy(publicId,{
+        resource_type:"image"
+      })
+
+      console.log(`File ${publicId} deleted from cloudinary`)
+    }
+
+  } catch (error) {
+    console.error("Error deleting file from cloudinary:",error)
+    throw new AppError(status.INTERNAL_SERVER_ERROR,"Failed to delete file from cloudinary")
+  }
+}
+
 export const cloudinaryUpload=cloudinary
