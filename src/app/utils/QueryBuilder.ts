@@ -1,4 +1,4 @@
-import { IQueryConfig, IQueryParams, PrismaCountArgs, PrismaFindManyArgs, PrismaModelDelegate, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface";
+import { IQueryConfig, IQueryParams, IPrismaCountArgs, IPrismaFindManyArgs, IPrismaModelDelegate, IPrismaSingleFilter, IPrismaWhereConditions,  } from "../interface/query.interface";
 
 
 export class QueryBuilder<
@@ -7,8 +7,8 @@ TWhereInput=Record<string,unknown>,
 TInclude=Record<string,unknown>
 >{
 
-    private query:PrismaFindManyArgs;
-    private countQuery:PrismaCountArgs;
+    private query:IPrismaFindManyArgs;
+    private countQuery:IPrismaCountArgs;
     private page:number=1;
     private limit:number=10;
     private skip:number=0;
@@ -18,88 +18,94 @@ TInclude=Record<string,unknown>
 
 
 
-     constructor(
-        private model : PrismaModelDelegate,
-        private queryParams : IQueryParams,
-        private config : IQueryConfig = {}
+    constructor(
+        private model:IPrismaModelDelegate,
+        private queryParams:IQueryParams,
+        private config:IQueryConfig
     ){
-        this.query = {
-            where : {},
-            include : {},
-            orderBy : {},
-            skip : 0,
-            take : 10,
-        };
+        this.query={
+            where:{},
+            include:{},
+            orderBy:{},
+            skip:0,
+            take:10
+        }
 
-        this.countQuery ={
-            where : {},
+        this.countQuery={
+            where:{}
         }
     }
 
-    search() : this {
-        const {searchTerm} = this.queryParams;
-        const { searchableFields} = this.config;
-        // doctorSearchableFields = ['user.name', 'user.email', 'specialties.specialty.title' , 'specialties.specialty.description']
-        if(searchTerm && searchableFields && searchableFields.length > 0){
-            const searchConditions : Record<string, unknown>[] = searchableFields.map((field) => {
+    search():this{
+        const{searchTerm}=this.queryParams
+        const {searchableFields}=this.config
+
+        if(searchTerm && searchableFields && searchableFields.length>0){
+            const searchCondition:Record<string,unknown>[]=searchableFields.map((field)=>{
                 if(field.includes(".")){
-                    const parts = field.split(".");
+                    const parts=field.split(".")
 
-                    if(parts.length === 2){
-                        const [relation, nestedField] = parts;
+                    if(parts.length===2){
+                        const [relation,nestedField]=parts
 
-                        const stringFilter : PrismaStringFilter = {
-                            contains : searchTerm,
-                            mode : 'insensitive' as const,
+                        const singleFilter:IPrismaSingleFilter={
+                            contains:searchTerm,
+                            mode:"insensitive"
                         }
-
-                        return {
-                            [relation] : {
-                                [nestedField] : stringFilter
+                        return{
+                            [relation]:{
+                                [nestedField]:singleFilter
                             }
                         }
-                    }else if(parts.length === 3){
-                        const [relation, nestedRelation, nestedField] = parts;
-
-                        const stringFilter : PrismaStringFilter = {
-                            contains : searchTerm,
-                            mode : 'insensitive' as const,
+                    }else if(parts.length===3){
+                        const[relation,nestedRelation,nestedField]=parts
+                        const singleFilter:IPrismaSingleFilter={
+                            contains:searchTerm,
+                            mode:"insensitive"
                         }
 
-                        return {
-                            [relation] : {
-                                some :{
-                                    [nestedRelation]: {
-                                        [nestedField]: stringFilter
+                        return{
+                            [relation]:{
+                                some:{
+                                    [nestedRelation]:{
+                                        [nestedField]:singleFilter
                                     }
                                 }
                             }
                         }
                     }
-                    
+
+
                 }
+
                 // direct field
-                const stringFilter: PrismaStringFilter = {
-                    contains: searchTerm,
-                    mode: 'insensitive' as const,
+                const singleFilter:IPrismaSingleFilter={
+                    contains:searchTerm,
+                    mode:"insensitive"
                 }
 
-                return {
-                    [field]: stringFilter
+                return{
+                    [field]:singleFilter
                 }
-            }
-        )
+            })
 
-        const whereConditions = this.query.where as PrismaWhereConditions
+        const whereConditions=this.query.where as IPrismaWhereConditions
 
-        whereConditions.OR = searchConditions;
+        whereConditions.OR=searchCondition 
 
-        const countWhereConditions = this.countQuery.where as PrismaWhereConditions;
-        countWhereConditions.OR = searchConditions;
-        }
+        const countWhereConditions=this.countQuery.where as IPrismaWhereConditions
 
-        return this;
+        countWhereConditions.OR=searchCondition
     }
+
+    return this
+
+    }
+
+   
      
 
 }
+
+
+
