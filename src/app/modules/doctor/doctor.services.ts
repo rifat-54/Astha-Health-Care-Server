@@ -3,20 +3,63 @@ import AppError from "../../errorHelpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { IUpdateDoctor } from "./doctor.interface";
 import { UserStatus } from "../../../generated/prisma/enums";
+import { doctorFilterableFields, doctorIncludeConfig, doctorSearchableFields } from "./doctor.constant";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { Doctor, Prisma } from "../../../generated/prisma/client";
+import { IQueryParams } from "../../interface/query.interface";
 
-const getAllDoctors = async () => {
-  const doctor = await prisma.doctor.findMany({
-    include: {
-      user: true,
-      doctorSpecilaties: {
-        include: {
-          specialty: true,
-        },
-      },
-    },
-  });
+const getAllDoctors = async (query:IQueryParams) => {
+  // const doctor = await prisma.doctor.findMany({
+  //   include: {
+  //     user: true,
+  //     doctorSpecilaties: {
+  //       include: {
+  //         specialty: true,
+  //       },
+  //     },
+  //   },
+  // });
 
-  return doctor;
+  // return doctor;
+
+
+
+
+  const queryBuilder = new QueryBuilder<Doctor, Prisma.DoctorWhereInput, Prisma.DoctorInclude>(
+        prisma.doctor,
+        query,
+        {
+            searchableFields: doctorSearchableFields,
+            filterableFields: doctorFilterableFields,
+        }
+    )
+
+    const result = await queryBuilder
+        .search()
+        .filter()
+        .where({
+            isDeleted: false,
+        })
+        .include({
+            user: true,
+            // specialties: true,
+            doctorSpecilaties: {
+                include:{
+                    specialty: true
+                }
+            },
+        })
+        .dynamicInclude(doctorIncludeConfig)
+        .paginate()
+        .sort()
+        .fields()
+        .execute();
+
+        console.log(result);
+    return result;
+
+
+
 };
 
 const getDoctorById = async (id: string) => {
@@ -135,6 +178,8 @@ const updateDoctor = async (id: string, payload: IUpdateDoctor) => {
   });
 
   return result;
+
+
 };
 
 const softDeleteDoctor=async(id:string)=>{
