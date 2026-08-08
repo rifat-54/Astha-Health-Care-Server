@@ -3,6 +3,7 @@ import { catchAsync } from "../../shared/catchAsync";
 import { sheduleServices } from "./schedule.services";
 import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
+import { IQueryParams } from "../../interface/query.interface";
 
 const createSchedule=catchAsync(
     async(req:Request,res:Response)=>{
@@ -18,7 +19,24 @@ const createSchedule=catchAsync(
     }
 )
 
+const getAllShedule=catchAsync(
+    async(req:Request,res:Response)=>{
+
+        const query=req.query
+
+        const result=await sheduleServices.getAllShedule(query as IQueryParams)
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"Successfully fetch Shedule",
+            data:result
+        })
+    }
+)
+
 
 export const sheduleController={
-    createSchedule
+    createSchedule,
+    getAllShedule
 }

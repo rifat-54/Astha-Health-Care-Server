@@ -1,82 +1,105 @@
 import { addMinutesWithOptions } from "date-fns/fp";
-import { ICreateShedulePayload } from "./schedule.interface"
+import { ICreateShedulePayload } from "./schedule.interface";
 import { addHours, addMinutes, format } from "date-fns";
 import { convertDateTime } from "./schedule.utils";
 import { prisma } from "../../lib/prisma";
+import { IQueryParams } from "../../interface/query.interface";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { Prisma, Schedule } from "../../../generated/prisma/client";
+import {
+  scheduleFilterableFields,
+  scheduleIncludeConfig,
+  scheduleSearchableFields,
+} from "./schedule.constant";
 
-const createSchedule=async(payload:ICreateShedulePayload)=>{
+const createSchedule = async (payload: ICreateShedulePayload) => {
+  console.log("Payload-> ", payload);
 
-console.log("Payload-> ",payload)
+  const { startDate, endDate, startTime, endTime } = payload;
 
-const{startDate,endDate,startTime,endTime}=payload
+  const interval = 30;
 
+  const currentDate = new Date(startDate);
+  const lastDate = new Date(endDate);
 
-const interval=30;
+  console.log(format(currentDate, "yyyy-MM-dd"));
 
-const currentDate=new Date(startDate)
-const lastDate=new Date(endDate)
+  const shedule: any = [];
 
-console.log(format(currentDate,"yyyy-MM-dd"))
+  while (currentDate <= lastDate) {
+    const startDateTime = new Date(
+      addMinutes(
+        addHours(
+          `${format(currentDate, "yyyy-MM-dd")}`,
+          Number(startTime.split(":")[0]),
+        ),
+        Number(startTime.split(":")[1]),
+      ),
+    );
 
-const shedule:any=[]
+    const endDateTime = new Date(
+      addMinutes(
+        addHours(
+          `${format(currentDate, "yyyy-MM-dd")}`,
+          Number(endTime.split(":")[0]),
+        ),
+        Number(endTime.split(":")[1]),
+      ),
+    );
 
-while(currentDate<=lastDate){
+    while (startDateTime < endDateTime) {
+      const s = await convertDateTime(startDateTime);
+      const e = await convertDateTime(addMinutes(startDateTime, interval));
 
-    const startDateTime=new Date(
-        addMinutes(
-            addHours(
-                `${format(currentDate,"yyyy-MM-dd")}`,
-                Number(startTime.split(":")[0])
-            ),
-            Number(startTime.split(":")[1])
-        )
-    )
+      const sheduleData = {
+        startDateTime: s,
+        endDateTime: e,
+      };
 
-    const endDateTime=new Date(
-        addMinutes(
-            addHours(
-                `${format(currentDate,"yyyy-MM-dd")}`,
-                Number(endTime.split(":")[0])
-            ),
-            Number(endTime.split(":")[1])
-        )
-    )
+      const existingShedule = await prisma.schedule.findFirst({
+        where: sheduleData,
+      });
 
-    while(startDateTime<endDateTime){
+      if (!existingShedule) {
+        const result = await prisma.schedule.create({
+          data: sheduleData,
+        });
+        console.log(result);
+        shedule.push(result);
+      }
 
-        const s=await convertDateTime(startDateTime)
-        const e=await convertDateTime(addMinutes(startDateTime,interval))
-
-        const sheduleData={
-            startDateTime:s,
-            endDateTime:e
-        }
-
-        const existingShedule=await prisma.schedule.findFirst({
-            where:sheduleData
-        })
-
-        if(!existingShedule){
-            const result=await prisma.schedule.create({
-                data:sheduleData
-            })
-            console.log(result)
-            shedule.push(result)
-        }
-
-        
-        startDateTime.setMinutes(startDateTime.getMinutes()+30)
+      startDateTime.setMinutes(startDateTime.getMinutes() + 30);
     }
 
-    currentDate.setDate(currentDate.getDate()+1)
-}
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
+  return shedule;
+};
 
+const getAllShedule = async (query: IQueryParams) => {
+  const queryBuilder = new QueryBuilder<
+    Schedule,
+    Prisma.ScheduleWhereInput,
+    Prisma.ScheduleInclude
+  >(prisma.schedule, query, {
+    searchableFields: scheduleSearchableFields,
+    filterableFields: scheduleFilterableFields,
+  });
 
-    return shedule;
-}
+  const result = await queryBuilder
+    .search()
+    .filter()
+    .paginate()
+    .dynamicInclude(scheduleIncludeConfig)
+    .sort()
+    .fields()
+    .execute();
 
+    return result;
+};
 
-export const sheduleServices={
-    createSchedule
-}
+export const sheduleServices = {
+  createSchedule,
+  getAllShedule
+};
