@@ -1,5 +1,5 @@
 import { addMinutesWithOptions } from "date-fns/fp";
-import { ICreateShedulePayload } from "./schedule.interface";
+import { ICreateShedulePayload, IUpdatShedulePayload } from "./schedule.interface";
 import { addHours, addMinutes, format } from "date-fns";
 import { convertDateTime } from "./schedule.utils";
 import { prisma } from "../../lib/prisma";
@@ -99,7 +99,69 @@ const getAllShedule = async (query: IQueryParams) => {
     return result;
 };
 
+const getScheduleById=async(id:string)=>{
+  const schedule=await prisma.schedule.findUnique({
+    where:{
+      id
+    }
+  })
+
+  return schedule;
+}
+const deleteSchedule=async(id:string)=>{
+  const schedule=await prisma.schedule.delete({
+    where:{
+      id
+    }
+  })
+
+  return schedule;
+}
+
+
+const updateSchedule=async(id:string,payload:IUpdatShedulePayload)=>{
+  const {startDate,endDate,startTime,endTime}=payload
+
+  const startDateTime=new Date(
+    addMinutes(
+      addHours(
+        `${format(new Date(startDate),"yyyy-MM-dd")}`,
+        Number(startTime.split(":")[0])
+      ),
+      Number(startTime.split(":")[1])
+    )
+  )
+
+  const endDateTime=new Date(
+    addMinutes(
+      addHours(
+        `${format(new Date(endDate),"yyyy-MM-dd")}`,
+        Number(endTime.split(":")[0])
+      ),
+      Number(endTime.split(":")[1])
+    )
+  )
+
+const result=await prisma.schedule.update({
+  where:{
+    id
+  },
+  data:{
+    startDateTime,
+    endDateTime
+  }
+})
+
+
+return result
+
+
+}
+
 export const sheduleServices = {
   createSchedule,
-  getAllShedule
+  getAllShedule,
+  getScheduleById,
+  updateSchedule,
+  deleteSchedule
 };
