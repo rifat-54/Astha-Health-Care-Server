@@ -3,6 +3,9 @@ import {v7 as uuidv7} from"uuid"
 import { IRequestUser } from "../../interface/requestUser.interface";
 import { prisma } from "../../lib/prisma";
 import { IBookAppointmentPayload } from "./appointment.interface";
+import { AppointmentStatus, UserRole } from "../../../generated/prisma/enums";
+import AppError from "../../errorHelpers/AppError";
+import status from "http-status";
 
 
 const bookApppointment=async(payload:IBookAppointmentPayload,user:IRequestUser)=>{
@@ -31,9 +34,15 @@ const bookApppointment=async(payload:IBookAppointmentPayload,user:IRequestUser)=
             doctorId_scheduleId:{
                 doctorId:doctorData.id,
                 scheduleId:scheduleData.id
-            }
+            },
         }
     })
+
+    if(doctorSchedule.isBooked){
+        throw new AppError(status.BAD_REQUEST,"This schedule is already booked.book another schedule")
+    }
+
+    console.log(doctorSchedule)
 
     const videoCallingId=String(uuidv7())
 
@@ -68,9 +77,85 @@ const bookApppointment=async(payload:IBookAppointmentPayload,user:IRequestUser)=
 
 }
 
+const getMyAppointment=async(user:IRequestUser)=>{
 
+    console.log(user)
+
+
+
+    if(user.role===UserRole.PATIENT){
+        const patientData=await prisma.patient.findUniqueOrThrow({
+            where:{
+                email:user.email
+            }
+        })
+
+        const result=await prisma.appointment.findMany({
+            where:{
+                patientId:patientData.id
+            },
+            include:{
+                patient:true,
+                schedule:true
+            }
+        })
+        return result
+    }else if(user.role===UserRole.DOCTOR){
+
+        const doctorData=await prisma.doctor.findUniqueOrThrow({
+            where:{
+                email:user.email
+            }
+        })
+
+         const result=await prisma.appointment.findMany({
+            where:{
+                doctorId:doctorData.id
+            },
+            include:{
+                doctor:true,
+                schedule:true
+            }
+        })
+        return result
+    }
+
+
+  
+}
+
+const changeAppointmentStatus=async(appointmentId:string,appointmentStatus:AppointmentStatus,user:IRequestUser)=>{
+    const appointmentData=await prisma.appointment.findFirstOrThrow({
+        where:{
+            id:appointmentId
+        },
+        include:{
+            doctor:true
+        }
+    })
+
+    console.log(appointmentData,appointmentStatus)
+
+    if(user.role===UserRole.DOCTOR && user.email!==appointmentData.doctor.email){
+        throw new AppError(status.FORBIDDEN,"This is not your appointment")
+    }
+
+    const result=await prisma.appointment.update({
+        where:{
+            id:appointmentId
+        },
+        data:{
+            status:appointmentStatus
+        }
+    })
+
+    return result;
+
+}
 
 
 export const appointmentServices={
-    bookApppointment
+    bookApppointment,
+    getMyAppointment,
+    changeAppointmentStatus
 }
