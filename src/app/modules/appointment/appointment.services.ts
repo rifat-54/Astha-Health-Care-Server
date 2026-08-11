@@ -119,6 +119,48 @@ const getMyAppointment=async(user:IRequestUser)=>{
         })
         return result
     }
+  
+}
+
+
+const getAppointmentById=async(appointmentId:string,user:IRequestUser)=>{
+
+    if(user.role===UserRole.PATIENT){
+        const patientData=await prisma.patient.findUniqueOrThrow({
+            where:{
+                email:user.email
+            }
+        })
+
+        const result=await prisma.appointment.findFirst({
+            where:{
+                patientId:patientData.id
+            },
+            include:{
+                patient:true,
+                schedule:true
+            }
+        })
+        return result
+    }else if(user.role===UserRole.DOCTOR){
+
+        const doctorData=await prisma.doctor.findUniqueOrThrow({
+            where:{
+                email:user.email
+            }
+        })
+
+         const result=await prisma.appointment.findFirst({
+            where:{
+                doctorId:doctorData.id
+            },
+            include:{
+                doctor:true,
+                schedule:true
+            }
+        })
+        return result
+    }
 
 
   
@@ -153,9 +195,23 @@ const changeAppointmentStatus=async(appointmentId:string,appointmentStatus:Appoi
 
 }
 
+const getAllAppointment=async()=>{
+    const result=await prisma.appointment.findMany({
+        include:{
+            doctor:true,
+            patient:true,
+            schedule:true
+        }
+    })
+
+    return result
+}
+
 
 export const appointmentServices={
     bookApppointment,
     getMyAppointment,
-    changeAppointmentStatus
+    changeAppointmentStatus,
+    getAppointmentById,
+    getAllAppointment
 }

@@ -54,8 +54,44 @@ const changeAppointmentStatus=catchAsync(
     }
 )
 
+
+const getAppointmentById=catchAsync(
+    async(req:Request,res:Response)=>{
+        const user=req.user
+
+        const appointmentId=req.params.id as string
+  
+
+        const result=await appointmentServices.getAppointmentById(appointmentId,user)
+
+        sendResponse(res,{
+            success:true,
+            httpStatusCode:status.OK,
+            message:"Appointment fetch successfully",
+            data:result
+        })
+    }
+)
+
+const getAllAppointment=catchAsync(
+    async(req:Request,res:Response)=>{
+
+        const result=await appointmentServices.getAllAppointment()
+
+        sendResponse(res,{
+            success:true,
+            httpStatusCode:status.OK,
+            message:"All Appointment fetch successfully",
+            data:result
+        })
+    }
+)
+
+
 export const appointmentController={
     bookApppointment,
     getMyAppointment,
-    changeAppointmentStatus
+    changeAppointmentStatus,
+    getAppointmentById,
+    getAllAppointment
 }
