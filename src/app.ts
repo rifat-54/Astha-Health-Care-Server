@@ -33,6 +33,9 @@ app.use(cors({
     allowedHeaders:["Content-Type","Authorization"]
 }))
 
+// stripe
+app.post("/webhook",express.raw({type:"application/json"}))
+
 app.set("view engine","ejs")
 app.set("views",path.resolve(process.cwd(),`src/app/templates`))
 
