@@ -11,6 +11,7 @@ import cors from "cors"
 import { envVeriable } from "./app/config/env";
 import path from "path";
 import qs from "qs";
+import { paymentController } from "./app/modules/payment/payment.controller";
 
 
 const app: Application = express();
@@ -34,7 +35,7 @@ app.use(cors({
 }))
 
 // stripe
-app.post("/webhook",express.raw({type:"application/json"}))
+app.post("/webhook",express.raw({type:"application/json"}),paymentController.handleStripeWebhookEvent)
 
 app.set("view engine","ejs")
 app.set("views",path.resolve(process.cwd(),`src/app/templates`))
