@@ -12,6 +12,8 @@ import { envVeriable } from "./app/config/env";
 import path from "path";
 import qs from "qs";
 import { paymentController } from "./app/modules/payment/payment.controller";
+import corn  from "node-cron"
+import { appointmentServices } from "./app/modules/appointment/appointment.services";
 
 
 const app: Application = express();
@@ -36,6 +38,15 @@ app.use(cors({
 
 // stripe
 app.post("/webhook",express.raw({type:"application/json"}),paymentController.handleStripeWebhookEvent)
+
+corn.schedule("*/25 * * * *",async()=>{
+    try {
+        console.log("Running corn job to cancel unpaid appointments...")
+        await appointmentServices.cancelUnpaidAppointments()
+    } catch (error:any) {
+        console.log("Error  occured while cancelling unpaid appointments:",error.message)
+    }
+})
 
 app.set("view engine","ejs")
 app.set("views",path.resolve(process.cwd(),`src/app/templates`))
