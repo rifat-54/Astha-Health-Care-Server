@@ -87,11 +87,48 @@ const getAllAppointment=catchAsync(
     }
 )
 
+const bookApppointmentWithPayLater=catchAsync(
+    async(req:Request,res:Response)=>{
+        const payload=req.body
+        const user=req.user
+
+        const result=await appointmentServices.bookApppointmentWithPayLater(payload,user)
+
+        sendResponse(res,{
+            httpStatusCode:status.CREATED,
+            success:true,
+            message:"Appointment booked successfully with pay later options",
+            data:result
+        })
+    }
+)
+
+
+const initiatePayment=catchAsync(
+    async(req:Request,res:Response)=>{
+        const appointmentId=req.params.id as string
+        const user=req.user
+
+        const result=await appointmentServices.initiatePayment(appointmentId,user)
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"Payment initiated successfully",
+            data:result
+        })
+    }
+)
+
+
+
 
 export const appointmentController={
     bookApppointment,
     getMyAppointment,
     changeAppointmentStatus,
     getAppointmentById,
-    getAllAppointment
+    getAllAppointment,
+    bookApppointmentWithPayLater,
+    initiatePayment
 }

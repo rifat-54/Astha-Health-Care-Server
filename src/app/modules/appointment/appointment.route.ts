@@ -11,4 +11,7 @@ router.get("/my-appointment/:id",checkAuth(UserRole.PATIENT,UserRole.DOCTOR),app
 router.patch("/:id",checkAuth(UserRole.PATIENT,UserRole.DOCTOR,UserRole.ADMIN,UserRole.SUPER_ADMIN),appointmentController.changeAppointmentStatus)
 router.get("/all-appointment",checkAuth(UserRole.ADMIN,UserRole.SUPER_ADMIN),appointmentController.getAllAppointment)
 
+router.post("/book-appointment-with-pay-later",checkAuth(UserRole.PATIENT),appointmentController.bookApppointmentWithPayLater)
+router.post("/initiate-payment/:id",checkAuth(UserRole.PATIENT),appointmentController.initiatePayment)
+
 export const appointmentRoute=router
