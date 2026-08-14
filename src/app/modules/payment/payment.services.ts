@@ -18,6 +18,7 @@ const handleStripeWebhookEvent=async(event:Stripe.Event)=>{
     switch(event.type){
         case "checkout.session.completed":{
             const session=event.data.object
+            console.log("payment session->",session)
 
             const appointmentId=session.metadata?.appointmentId
             const paymentId=session.metadata?.paymentId

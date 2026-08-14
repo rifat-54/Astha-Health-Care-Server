@@ -1,4 +1,4 @@
-// import { uuidv7 } from "zod";
+
 import {v7 as uuidv7} from"uuid"
 import { IRequestUser } from "../../interface/requestUser.interface";
 import { prisma } from "../../lib/prisma";
@@ -75,7 +75,8 @@ const bookApppointment=async(payload:IBookAppointmentPayload,user:IRequestUser)=
 
         // payment inpliment
 
-        const transactionId=String(uuidv7)
+        const transactionId=String(uuidv7())
+        console.log("tanjection id=>",transactionId)
 
         const paymentData=await tx.payment.create({
             data:{
@@ -190,7 +191,7 @@ const bookApppointmentWithPayLater=async(payload:IBookAppointmentPayload,user:IR
 
         // payment inpliment
 
-        const transactionId=String(uuidv7)
+        const transactionId=String(uuidv7())
 
         const paymentData=await tx.payment.create({
             data:{

@@ -20,6 +20,9 @@ const app: Application = express();
 
 app.set("query parser",(str:string)=>qs.parse(str))
 
+//! stripe webhook must come before express.json . because it need rew data
+app.post("/webhook",express.raw({type:"application/json"}),paymentController.handleStripeWebhookEvent)
+
 
 
 // Enable URL-encoded form data parsing
@@ -36,8 +39,7 @@ app.use(cors({
     allowedHeaders:["Content-Type","Authorization"]
 }))
 
-// stripe
-app.post("/webhook",express.raw({type:"application/json"}),paymentController.handleStripeWebhookEvent)
+
 
 corn.schedule("*/25 * * * *",async()=>{
     try {
