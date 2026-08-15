@@ -1,7 +1,7 @@
 model PatientHealthData{
     id String @id @default(uuid())
 
-    gerder Gender
+    gender Gender
       dateOfBirth         DateTime
   bloodGroup          BloodGroup
   hasAllergies        Boolean    @default(false)
