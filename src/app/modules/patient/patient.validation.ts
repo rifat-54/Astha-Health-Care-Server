@@ -62,7 +62,7 @@ const updatePatientProfileZodSchema = z.object({
     .array(
       z.object({
         shouldDelete: z.boolean().optional(),
-        reportId: z.uuid().optional(),
+        reportId: z.url().optional(),
         reportName: z.string().optional(),
         reportLink: z.url().optional(),
       }),

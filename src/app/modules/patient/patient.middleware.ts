@@ -17,7 +17,7 @@ export const updatePatientProfileMiddleware=async(req:Request,res:Response,next:
         payload.patientInfo.profilePhoto=files.profilePhoto[0].path
     }
 
-    if(files.medicalReports && files?.medicalReports.length>0){
+    if(files?.medicalReports && files?.medicalReports.length>0){
         const newReport=files.medicalReports.map(file=>({
             reportName:file.originalname || `Medical Report -${new Date().getTime()}`,
             reportLink:file.path

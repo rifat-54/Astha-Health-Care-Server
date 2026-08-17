@@ -73,12 +73,19 @@ const updatePatientProfile=async(user:IRequestUser,payload:IUpdatePatientProfile
             
             for(const report of payload.medicalReports){
                 console.log("medical report->",report.reportName ,report.reportLink)
-                if(report.shouldDelete && report.reportLink){
-                    const deleteReport=await tx.medicalReport.delete({
+                if(report?.shouldDelete && report?.reportId){
+                    const reportData=await tx.medicalReport.findFirstOrThrow({
                         where:{
-                            id:report.reportId
+                            reportLink:report.reportId
                         }
                     })
+                    const deleteReport=await tx.medicalReport.delete({
+                        where:{
+                            id:reportData.id
+                        }
+                    }) 
+
+                    console.log("delete report _>",deleteReport)
 
                     //! delete from cloudinary also
                     if(deleteReport.reportLink){
