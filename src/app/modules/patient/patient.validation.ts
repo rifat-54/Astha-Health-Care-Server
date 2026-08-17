@@ -58,7 +58,7 @@ const updatePatientProfileZodSchema = z.object({
       maritalStatus: z.string().optional(),
     })
     .optional(),
-  medicalReport: z
+  medicalReports: z
     .array(
       z.object({
         shouldDelete: z.boolean().optional(),

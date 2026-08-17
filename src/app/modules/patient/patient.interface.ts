@@ -36,5 +36,5 @@ export interface IUpdatePatientMedicalReportPayload{
 export interface IUpdatePatientProfilePayload{
     patientInfo?:IUpdatePatientInfoPayload,
     patientHealthData?:IUpdatePatientHealthDataPayload,
-    medicalReport?:IUpdatePatientMedicalReportPayload
+    medicalReports?:IUpdatePatientMedicalReportPayload[]
 }

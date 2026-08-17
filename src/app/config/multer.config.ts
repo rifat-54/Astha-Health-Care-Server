@@ -8,6 +8,7 @@ const storage=new CloudinaryStorage({
         const originalName=file.originalname;
         const extension=originalName.split(".").pop()?.toLocaleLowerCase()
 
+        console.log("called multer")
 
   const fileNameWithoutExtension = originalName
     .split(".")

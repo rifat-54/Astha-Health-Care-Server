@@ -1,5 +1,5 @@
-model Patient{
-      id String @id @default(uuid(7))
+model Patient {
+  id String @id @default(uuid(7))
 
   name          String
   email         String    @unique
@@ -11,17 +11,16 @@ model Patient{
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  
-  userId            String             @unique
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  medicalReports MedicalReport[]
+  medicalReports    MedicalReport[]
   patientHealthData PatientHealthData?
-  prescription Prescription[]
-  review Review[]
-  appointment Appointment[]
+  prescription      Prescription[]
+  review            Review[]
+  appointment       Appointment[]
 
-  @@index([email],name:"idx_patient_email")
-  @@index([isDeleted],name:"idx_patient_isDeleted")
+  @@index([email], name: "idx_patient_email")
+  @@index([isDeleted], name: "idx_patient_isDeleted")
   @@map("patient")
 }

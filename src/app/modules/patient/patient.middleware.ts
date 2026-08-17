@@ -17,20 +17,20 @@ export const updatePatientProfileMiddleware=async(req:Request,res:Response,next:
         payload.patientInfo.profilePhoto=files.profilePhoto[0].path
     }
 
-    if(files.medicalReport && files?.medicalReport.length>0){
-        const newReport=files.medicalReport.map(file=>({
+    if(files.medicalReports && files?.medicalReports.length>0){
+        const newReport=files.medicalReports.map(file=>({
             reportName:file.originalname || `Medical Report -${new Date().getTime()}`,
             reportLink:file.path
         }))
 
-        if(payload.medicalReport && Array.isArray(payload.medicalReport)){
-            payload.medicalReport=[...payload.medicalReport,...newReport]
+        if(payload.medicalReports && Array.isArray(payload.medicalReports)){
+            payload.medicalReports=[...payload.medicalReports,...newReport]
         }else{
-            payload.medicalReport=newReport
+            payload.medicalReports=newReport
         }
     }
 
-    console.log(payload)
+    console.log("from middleware",payload)
 
     req.body=payload;
     console.log(req.body)
