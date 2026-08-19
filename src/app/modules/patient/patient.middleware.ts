@@ -30,7 +30,7 @@ export const updatePatientProfileMiddleware=async(req:Request,res:Response,next:
         }
     }
 
-    console.log("from middleware",payload)
+    console.log("from patient profile middleware",payload)
 
     req.body=payload;
     console.log(req.body)

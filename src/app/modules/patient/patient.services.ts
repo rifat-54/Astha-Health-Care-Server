@@ -7,6 +7,9 @@ import { convertToDateTime } from "./patient.utils"
 
 const updatePatientProfile=async(user:IRequestUser,payload:IUpdatePatientProfilePayload)=>{
 
+    // throw new Error("This error intensionally for check backend issue")
+
+
     const patientData=await prisma.patient.findFirstOrThrow({
         where:{
             email:user.email
