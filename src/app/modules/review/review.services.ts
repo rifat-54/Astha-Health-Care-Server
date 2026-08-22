@@ -1,9 +1,9 @@
 import status from "http-status";
-import { PaymentStatus } from "../../../generated/prisma/enums";
+import { PaymentStatus, UserRole } from "../../../generated/prisma/enums";
 import AppError from "../../errorHelpers/AppError";
 import { IRequestUser } from "../../interface/requestUser.interface";
 import { prisma } from "../../lib/prisma";
-import { ICreateReviewPayload } from "./review.interface";
+import { ICreateReviewPayload, IUpdateReviewPayload } from "./review.interface";
 
 
 const giveReview=async(user:IRequestUser,payload:ICreateReviewPayload)=>{
@@ -74,8 +74,159 @@ const giveReview=async(user:IRequestUser,payload:ICreateReviewPayload)=>{
     return result;
 }
 
+const getAllReview=async()=>{
+    const result=await prisma.review.findMany({
+        include:{
+            doctor:true,
+            patient:true,
+            appointment:true
+        }
+    })
 
+    return result
+}
+
+
+const myReview=async(user:IRequestUser)=>{
+
+    if(user.role===UserRole.PATIENT){
+        const patientData=await prisma.patient.findUniqueOrThrow({
+            where:{
+                userId:user.userId
+            }
+        })
+
+        return await prisma.review.findMany({
+            where:{
+                patientId:patientData.id
+            }
+        })
+    }
+
+    if(user.role===UserRole.DOCTOR){
+        const doctorData=await prisma.doctor.findUniqueOrThrow({
+            where:{
+                userId:user.userId
+            }
+        })
+
+        return await prisma.review.findMany({
+            where:{
+                doctorId:doctorData.id
+            }
+        })
+    }
+
+}
+
+
+const updateReview=async(user:IRequestUser,reviewId:string,payload:IUpdateReviewPayload)=>{
+    const patientData=await prisma.patient.findFirstOrThrow({
+        where:{
+            userId:user.userId
+        }
+    })
+
+    const reviewData=await prisma.review.findUniqueOrThrow({
+        where:{
+            id:reviewId
+        }
+    })
+
+    if(patientData.id!==reviewData.patientId){
+        throw new AppError(status.BAD_REQUEST,"You can update review only your appointment")
+    }
+
+    const result=await prisma.$transaction(async(tx)=>{
+        const updatedReview= await tx.review.update({
+            where:{
+                id:reviewId
+            },
+            data:{
+                ...payload
+            }
+        })
+
+        const avgRating=await tx.review.aggregate({
+            where:{
+                 doctorId:reviewData.doctorId
+            },
+            _avg:{
+                rating:true
+            }
+        })
+
+        await tx.doctor.update({
+            where:{
+                id:reviewData.doctorId
+            },
+            data:{
+                averageRating:avgRating._avg.rating as number
+            }
+        })
+
+        return updatedReview;
+
+    })
+
+
+    return result
+
+  
+}
+
+const deleteReview=async(user:IRequestUser,reviewId:string)=>{
+    const patientData=await prisma.patient.findUniqueOrThrow({
+        where:{
+            userId:user.userId
+        }
+    })
+
+    const reviewData=await prisma.review.findFirstOrThrow({
+        where:{
+            id:reviewId
+        }
+    })
+
+    if(patientData.id!==reviewData.patientId){
+        throw new AppError(status.FORBIDDEN,"You can delete only your review")
+    }
+
+    const result=await prisma.$transaction(async(tx)=>{
+        const deletedReview=await tx.review.delete({
+            where:{
+                id:reviewId
+            }
+        })
+
+        const avgRating=await tx.review.aggregate({
+            where:{
+                doctorId:reviewData.doctorId
+            },
+            _avg:{
+                rating:true
+            }
+        })
+
+        await tx.doctor.update({
+            where:{
+                id:reviewData.doctorId
+            },
+            data:{
+                averageRating:avgRating._avg.rating as number
+            }
+        })
+
+        return deletedReview;
+    })
+
+    return result;
+}
 
 export const reviewServices={
-    giveReview
+    giveReview,
+    getAllReview,
+    myReview,
+    updateReview,
+    deleteReview
 }
