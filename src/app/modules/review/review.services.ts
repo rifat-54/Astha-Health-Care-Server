@@ -3,12 +3,17 @@ import { PaymentStatus } from "../../../generated/prisma/enums";
 import AppError from "../../errorHelpers/AppError";
 import { IRequestUser } from "../../interface/requestUser.interface";
 import { prisma } from "../../lib/prisma";
-import { ICreateReviewPayload } from "./review.utils";
+import { ICreateReviewPayload } from "./review.interface";
+
 
 const giveReview=async(user:IRequestUser,payload:ICreateReviewPayload)=>{
+
+    console.log(payload)
+
+
     const patientData=await prisma.patient.findFirstOrThrow({
         where:{
-            id:user.userId
+            userId:user.userId
         }
     })
 
