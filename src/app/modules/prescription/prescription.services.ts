@@ -6,6 +6,7 @@ import { ICreatePrescriptionPayload } from "./prescription.interface";
 import { generatePrescriptionPDF } from "./prescription.utils";
 import { uploadFileToCloudinary } from "../../config/cloudinary.config";
 import { buffer } from "node:stream/consumers";
+import { sendEmail } from "../../utils/email";
 
 
 const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayload)=>{
@@ -76,7 +77,8 @@ const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayloa
 
         const fileName=`presctiption-${Date.now()}.pdf`
         const uploadFile=await uploadFileToCloudinary(pdfBuffer,fileName)
-        const pdfUrl=uploadFile.source_url
+        console.log(uploadFile)
+        const pdfUrl=uploadFile.secure_url
 
         console.log(pdfUrl)
 
@@ -88,6 +90,22 @@ const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayloa
                 pdfUrl
             }
         })
+
+        try {
+            const patient=appointmentData.patient
+            const doctor=appointmentData.doctor
+
+            await sendEmail({
+                to:patient.email,
+                subject:`Your have received a new prescription from Dr. ${doctor.name}`,
+                templateName:"",
+                templateData:{
+                    
+                }
+            })
+        } catch (error) {
+            
+        }
 
         return updatePrescription
 
