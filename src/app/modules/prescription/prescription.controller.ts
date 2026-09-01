@@ -35,8 +35,60 @@ const myPrescription=catchAsync(
     }
 )
 
+const getAllPrescription=catchAsync(
+    async(req:Request,res:Response)=>{
+        const user=req.user
+        
+        const result=await prescriptiionServices.getAllPrescription()
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"All Prescription fetch successfully",
+            data:result
+        })
+    }
+)
+
+const updatePrescription=catchAsync(
+    async(req:Request,res:Response)=>{
+        const user=req.user
+
+        const prescriptionId=req.params.id as string
+        
+        const result=await prescriptiionServices.updatePrescription(user,prescriptionId,req.body)
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"Prescription updated successfully",
+            data:result
+        })
+    }
+)
+
+const deletePrescription=catchAsync(
+    async(req:Request,res:Response)=>{
+        const user=req.user
+
+        const prescriptionId=req.params.id as string
+        
+        const result=await prescriptiionServices.deletePrescription(user,prescriptionId)
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"Prescription deleted successfully",
+            data:result
+        })
+    }
+)
+
 
 export const prescriptionController={
     givePrescription,
-    myPrescription
+    myPrescription,
+    getAllPrescription,
+    updatePrescription,
+    deletePrescription
 }

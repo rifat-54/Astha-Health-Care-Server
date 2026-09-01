@@ -6,5 +6,6 @@ export interface ICreatePrescriptionPayload{
 
 export interface IUpdatePrescriptionPayload{
     appointmentId:string,
-    instructions:string
+    instructions:string,
+    followUpDate?:Date,
 }
