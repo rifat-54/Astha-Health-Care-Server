@@ -33,6 +33,8 @@ export const checkAuth=(...authRoles:UserRole[])=>{
             if(sessionExits && sessionExits.user){
                 const user=sessionExits.user;
 
+                console.log("User -> ",user)
+
                 const now=new Date()
 
                 const expiresAt=new Date(sessionExits.expiresAt)

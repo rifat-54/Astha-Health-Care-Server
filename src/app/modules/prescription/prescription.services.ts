@@ -35,6 +35,8 @@ const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayloa
         }
     })
 
+    console.log("appoint data ->",appointmentData)
+
     if(appointmentData.doctorId!==doctorData.id){
         throw new AppError(status.BAD_REQUEST,"You can create prescriptiion only your own appointment")
     }
@@ -98,17 +100,35 @@ const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayloa
             await sendEmail({
                 to:patient.email,
                 subject:`Your have received a new prescription from Dr. ${doctor.name}`,
-                templateName:"",
+                templateName:"prescription",
                 templateData:{
-                    
-                }
+                    doctorName: doctor.name,
+                    patientName: patient.name,
+                    specialization: doctor.doctorSpecilaties.map((s : any )=> s.title).join(", "),
+                    appointmentDate: new Date(appointmentData.schedule.startDateTime).toLocaleString(),
+                    issuedDate: new Date().toLocaleDateString(),
+                    prescriptionId: result.id,
+                    instructions: payload.instructions,
+                    followUpDate: followUpDate.toLocaleDateString(),
+                    pdfUrl: pdfUrl
+                },
+                attachments:[
+                    {
+                        filename:fileName,
+                        content:pdfBuffer,
+                        contentType:"application/pdf"
+                    }
+                ]
             })
         } catch (error) {
-            
+            console.log("Failed to send email notification for prescription",error)
         }
 
         return updatePrescription
 
+    },{
+        maxWait:15000,
+        timeout:20000
     })
 
     return resullt;
