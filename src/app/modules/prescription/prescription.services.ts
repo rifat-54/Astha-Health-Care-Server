@@ -7,6 +7,7 @@ import { generatePrescriptionPDF } from "./prescription.utils";
 import { uploadFileToCloudinary } from "../../config/cloudinary.config";
 import { buffer } from "node:stream/consumers";
 import { sendEmail } from "../../utils/email";
+import { UserRole } from "../../../generated/prisma/enums";
 
 
 const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayload)=>{
@@ -134,6 +135,49 @@ const givePrescription=async(user:IRequestUser,payload:ICreatePrescriptionPayloa
     return resullt;
 }
 
+const myPrescription=async(user:IRequestUser)=>{
+    const exitUser=await prisma.user.findUniqueOrThrow({
+        where:{
+            email:user.email
+        }
+    })
+
+    if(exitUser.role===UserRole.DOCTOR){
+        const result=await prisma.prescription.findMany({
+            where:{
+                doctor:{
+                    email:user.email
+                }
+            },
+            include:{
+                appointment:true,
+                doctor:true,
+                patient:true
+            }
+        })
+
+        return result
+    }
+
+    if(user.role===UserRole.PATIENT){
+        const result=await prisma.prescription.findMany({
+            where:{
+                patient:{
+                    email:user.email
+                }
+            },
+            include:{
+                doctor:true,
+                patient:true,
+                appointment:true
+            }
+        })
+
+        return result;
+    }
+}
+
 export const prescriptiionServices={
-    givePrescription
+    givePrescription,
+    myPrescription
 }

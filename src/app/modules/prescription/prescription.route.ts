@@ -9,5 +9,6 @@ import { PrescriptionValidation } from "./prescription.validation";
 const router=Router()
 
 router.post("/",checkAuth(UserRole.DOCTOR),validateRequest(PrescriptionValidation.createPrescriptionZodSchema),prescriptionController.givePrescription)
+router.get("/myprescription",checkAuth(UserRole.DOCTOR),prescriptionController.myPrescription)
 
 export const prescriptionRoute=router

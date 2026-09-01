@@ -20,7 +20,23 @@ const givePrescription=catchAsync(
     }
 )
 
+const myPrescription=catchAsync(
+    async(req:Request,res:Response)=>{
+        const user=req.user
+        
+        const result=await prescriptiionServices.myPrescription(user)
+
+        sendResponse(res,{
+            httpStatusCode:status.OK,
+            success:true,
+            message:"Prescription fetch successfully",
+            data:result
+        })
+    }
+)
+
 
 export const prescriptionController={
-    givePrescription
+    givePrescription,
+    myPrescription
 }
