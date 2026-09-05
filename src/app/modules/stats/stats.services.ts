@@ -77,5 +77,12 @@ const getPieChartData=async()=>{
             id:true
         }
     })
+
+    const formatAppointmentStatusDistribution=appointmentStatusDistribution.map(({_count,status})=>({
+        status,
+        count:_count.id
+    }))
+
+    return formatAppointmentStatusDistribution;
     
 }
