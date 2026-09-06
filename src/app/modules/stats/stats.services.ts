@@ -86,3 +86,21 @@ const getPieChartData=async()=>{
     return formatAppointmentStatusDistribution;
     
 }
+
+
+const getBarChartData=async()=>{
+    interface IAppointmentCountByMonth{
+        month:Date,
+        count:bigint
+    }
+
+    const appointmentCountByMonth:IAppointmentCountByMonth[]=await prisma.$queryRaw`
+    SELECT DATE_TRUNC('month',"createdAt") as month,
+    CAST(COUNT(*) AS INTEGER) AS count
+    FROM "appointment"
+    GROUP BY month
+    ORDER BY month ASC
+    `
+
+    return appointmentCountByMonth;
+}
