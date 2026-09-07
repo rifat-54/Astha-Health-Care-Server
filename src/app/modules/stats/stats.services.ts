@@ -231,11 +231,6 @@ const getPatientStatsData=async(user:IRequestUser)=>{
 
 
 
-
-
-
-
-
 const getPieChartData=async()=>{
     const appointmentStatusDistribution=await prisma.appointment.groupBy({
         by:["status"],
@@ -270,6 +265,9 @@ const getBarChartData=async()=>{
 
     return appointmentCountByMonth;
 }
+
+
+
 
 
 export const statsServices={
