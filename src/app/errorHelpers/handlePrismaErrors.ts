@@ -1,4 +1,5 @@
 import status from "http-status"
+import { Prisma } from "../../generated/prisma/client"
 
 const getStatusCodeFromPrismaError=(errorCode:string)=>{
 
@@ -99,4 +100,42 @@ const formatErrorMeta=(meta?:Record<string,unknown>)=>{
     }
 
     return parts.length>0?parts.join(" | "):""
+}
+
+
+export const handlePrismaClientKnownRequestError=(error:Prisma.PrismaClientKnownRequestError)=>{
+    const statusCode=getStatusCodeFromPrismaError(error.code)
+    const metaInfo=formatErrorMeta(error.meta)
+
+    let cleanMessage=error.message
+
+    // Remove the "Invalid `prisma.user.create()` invocation" part from the message for better readability
+    cleanMessage=cleanMessage.replace(/Invalid `.*?` invocation:?\s*/i,"")
+
+    // split by new line and take the first line as the4 main message,rest can be added to error  source
+
+    const lines=cleanMessage.split("\n").filter(line=>line.trim())
+    const mainMessage=lines[0] || "An error occured with the database operation"
+
+    const errorSource=[
+        {
+            path:error.code,
+            message:metaInfo? `${mainMessage} | ${metaInfo}`:mainMessage
+        }
+    ]
+
+    if(error.meta?.cause){
+        errorSource.push({
+            path:"cause",
+            message:String(error.meta.cause)
+        })
+    }
+
+    return{
+        success:false,
+        statusCode,
+        message:`Prisma Client Known Request Error: ${mainMessage}`,
+        errorSource
+    }
+    
 }
