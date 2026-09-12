@@ -101,6 +101,8 @@ export const globalErrorHandler=async(err:any,req:Request,res:Response,next:Next
         ]
     }
 
+    // hi it is middle ware.
+
     const errorResponse={
         success:false,
         message:message,
